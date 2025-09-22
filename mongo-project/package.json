@@ -1,16 +1,21 @@
 {
-  "name": "mongo-project",
+  "name": "electronics-store-db",
   "version": "1.0.0",
-  "main": "createDatabase.js",
+  "description": "Database system for electronics store",
+  "main": "index.js",
   "scripts": {
+    "create-db": "node createDatabase.js",
+    "populate-data": "node populateTestData.js",
+    "demo-views": "node demoViews.js",
+    "demo-crud": "node demoCrudAndPagination.js",
+    "performance-test": "node performanceComparison.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": ["mongodb", "database", "electronics-store"],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
-  "description": "",
   "dependencies": {
-    "mongodb": "^6.19.0"
+    "mongodb": "^4.17.0"
   }
 }

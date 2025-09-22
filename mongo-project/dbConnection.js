@@ -44,7 +44,6 @@ class DatabaseConnection {
         return this.db;
     }
 
-    // Метод для перевірки стану з'єднання
     async healthCheck() {
         try {
             await this.db.command({ ping: 1 });
@@ -55,5 +54,4 @@ class DatabaseConnection {
     }
 }
 
-// Експортуємо екземпляр класу (Singleton)
 module.exports = new DatabaseConnection();

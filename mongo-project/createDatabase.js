@@ -248,6 +248,19 @@ async function createDatabase() {
             console.log('Колекція shipping створена');
         }
 
+        // Створення індексів для покращення продуктивності
+        await db.collection('products').createIndexes([
+            { key: { categoryId: 1 } },
+            { key: { price: 1 } },
+            { key: { name: "text", description: "text", brand: "text" } }
+        ]);
+
+        await db.collection('users').createIndex({ email: 1 }, { unique: true });
+        await db.collection('orders').createIndex({ userId: 1, createdAt: -1 });
+        await db.collection('reviews').createIndex({ productId: 1, userId: 1 }, { unique: true });
+
+        console.log('Індекси успішно створені');
+
         // ======= Створення представлень (view) =======
         const views = [
             {

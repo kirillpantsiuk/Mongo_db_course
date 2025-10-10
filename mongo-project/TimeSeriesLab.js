@@ -1,7 +1,6 @@
 // TimeSeriesLabSolution.js
 // Лабораторна робота 6: Часові ряди в MongoDB
 // Виправлена версія з унікальними назвами колекцій та поясненнями
-
 const { MongoClient } = require('mongodb');
 const uri = 'mongodb://127.0.0.1:27017/electronicsStore';
 const client = new MongoClient(uri);
@@ -14,7 +13,6 @@ async function createTimeSeriesCollections() {
     try {
         await client.connect();
         const db = client.db();
-
         // 1.1 Колекція user_activity_log
         // Призначення: Відстеження дій користувачів на сайті
         // Особливості:
@@ -31,7 +29,6 @@ async function createTimeSeriesCollections() {
             expireAfterSeconds: 2592000 // 30 днів в секундах
         });
         console.log('Колекцію user_activity_log створено');
-
         // 1.2 Колекція sales_transactions
         // Призначення: Моніторинг продажів в реальному часі
         // Особливості:
@@ -63,12 +60,10 @@ async function populateCollections() {
     try {
         await client.connect();
         const db = client.db();
-
         // 2.1 Очистка колекцій перед заповненням
         await db.collection('user_activity_log').deleteMany({});
         await db.collection('sales_transactions').deleteMany({});
         console.log('Колекції очищено');
-
         // 2.2 Заповнення колекції user_activity_log
         // Формат документів:
         // - timestamp: Час дії користувача
@@ -108,7 +103,6 @@ async function populateCollections() {
             }
         ]);
         console.log('Колекцію user_activity_log заповнено');
-
         // 2.3 Заповнення колекції sales_transactions
         // Формат документів:
         // - timestamp: Час продажу
@@ -157,7 +151,6 @@ async function runAnalytics() {
     try {
         await client.connect();
         const db = client.db();
-
         // 3.1 Активність користувачів по годинах
         // Призначення: Виявлення пікових періодів активності
         // Користь:
@@ -179,7 +172,6 @@ async function runAnalytics() {
         console.log("\n3.1 Активність користувачів по годинах:");
         const activityResult = await db.collection('user_activity_log').aggregate(activityByHour).toArray();
         console.log(activityResult);
-
         // 3.2 Продажі по годинах
         // Призначення: Аналіз динаміки продажів
         // Користь:
@@ -200,7 +192,6 @@ async function runAnalytics() {
         console.log("\n3.2 Продажі по годинах:");
         const salesResult = await db.collection('sales_transactions').aggregate(salesByHour).toArray();
         console.log(salesResult);
-
         // 3.3 Найпопулярніші продукти
         // Призначення: Визначення лідируючих товарів
         // Користь:
@@ -220,7 +211,6 @@ async function runAnalytics() {
         console.log("\n3.3 Найпопулярніші продукти:");
         const productsResult = await db.collection('sales_transactions').aggregate(popularProducts).toArray();
         console.log(productsResult);
-
         // 3.4 Продажі по регіонах
         // Призначення: Географічний аналіз продажів
         // Користь:
@@ -239,7 +229,6 @@ async function runAnalytics() {
         console.log("\n3.4 Продажі по регіонах:");
         const regionResult = await db.collection('sales_transactions').aggregate(salesByRegion).toArray();
         console.log(regionResult);
-
         // 3.5 Аналіз використання пристроїв
         // Призначення: Вивчення переваг користувачів
         // Користь:
@@ -276,29 +265,29 @@ async function runAnalytics() {
  * 4. Головна функція виконання роботи
  */
 async function main() {
-    console.log("Лабораторна робота 6: Часові ряди в MongoDB\n");
-    console.log("Ця програма демонструє використання колекцій часових рядів для аналізу даних електронного магазину\n");
-
-    // Виконання всіх етапів
-    await createTimeSeriesCollections();
-    await populateCollections();
-    await runAnalytics();
-
-    console.log("\nЛабораторна робота успішно завершена!");
-    console.log("\nОбгрунтування використаних рішень:");
-    console.log("1. Колекція user_activity_log:");
-    console.log("- Гранулярність 'hours' достатня для аналізу поведінки користувачів");
-    console.log("- TTL 30 днів дозволяє аналізувати довгострокові тренди");
-    console.log("- Дані про активність корисно для оптимізації сайту");
-
-    console.log("\n2. Колекція sales_transactions:");
-    console.log("- Гранулярність 'minutes' необхідна для оперативного аналізу");
-    console.log("- TTL 7 днів забезпечує актуальність даних для швидких рішень");
-    console.log("- Дані про продажі критично важливі для бізнес-аналізу");
-
-    console.log("\n3. Агрегаційні запити:");
-    console.log("- Дозволяють отримати цінну аналітику для прийняття рішень");
-    console.log("- Кожен запит має конкретне бізнес-застосування");
+    try {
+        console.log("Лабораторна робота 6: Часові ряди в MongoDB\n");
+        console.log("Ця програма демонструє використання колекцій часових рядів для аналізу даних електронного магазину\n");
+        // Виконання всіх етапів
+        await createTimeSeriesCollections();
+        await populateCollections();
+        await runAnalytics();
+        console.log("\nЛабораторна робота успішно завершена!");
+        console.log("\nОбгрунтування використаних рішень:");
+        console.log("1. Колекція user_activity_log:");
+        console.log("- Гранулярність 'hours' достатня для аналізу поведінки користувачів");
+        console.log("- TTL 30 днів дозволяє аналізувати довгострокові тренди");
+        console.log("- Дані про активність корисно для оптимізації сайту");
+        console.log("\n2. Колекція sales_transactions:");
+        console.log("- Гранулярність 'minutes' необхідна для оперативного аналізу");
+        console.log("- TTL 7 днів забезпечує актуальність даних для швидких рішень");
+        console.log("- Дані про продажі критично важливі для бізнес-аналізу");
+        console.log("\n3. Агрегаційні запити:");
+        console.log("- Дозволяють отримати цінну аналітику для прийняття рішень");
+        console.log("- Кожен запит має конкретне бізнес-застосування");
+    } catch (error) {
+        console.error('Помилка в головній функції:', error);
+    }
 }
 
 main().catch(console.error);

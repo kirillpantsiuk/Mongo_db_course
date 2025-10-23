@@ -1,5 +1,4 @@
 const { MongoClient } = require('mongodb');
-
 const uri = 'mongodb://127.0.0.1:27017/electronicsStore';
 const client = new MongoClient(uri);
 
@@ -7,8 +6,11 @@ async function createDatabase() {
     try {
         await client.connect();
         console.log('Підключено до MongoDB сервера');
-
         const db = client.db();
+
+        // Очистка бази даних перед початком
+        await db.dropDatabase();
+        console.log('База даних очищена');
 
         // Перевірка існування колекцій
         const collections = await db.listCollections().toArray();
@@ -248,17 +250,53 @@ async function createDatabase() {
             console.log('Колекція shipping створена');
         }
 
-        // Створення індексів для покращення продуктивності
+        // Створення текстових індексів для повнотекстового пошуку (оптимізовано для ЛР 8)
+        await db.collection('products').createIndex(
+            {
+                name: 'text',
+                description: 'text',
+                brand: 'text',
+                tags: 'text'
+            },
+            {
+                weights: {
+                    name: 10,
+                    description: 5,
+                    brand: 3,
+                    tags: 1
+                },
+                name: 'products_text_index',
+                default_language: 'english'
+            }
+        );
+
+        await db.collection('reviews').createIndex(
+            {
+                title: 'text',
+                comment: 'text',
+                advantages: 'text',
+                disadvantages: 'text'
+            },
+            {
+                weights: {
+                    title: 5,
+                    comment: 3,
+                    advantages: 2,
+                    disadvantages: 2
+                },
+                name: 'reviews_text_index',
+                default_language: 'english'
+            }
+        );
+
+        // Створення звичайних індексів
         await db.collection('products').createIndexes([
             { key: { categoryId: 1 } },
-            { key: { price: 1 } },
-            { key: { name: "text", description: "text", brand: "text" } }
+            { key: { price: 1 } }
         ]);
-
         await db.collection('users').createIndex({ email: 1 }, { unique: true });
         await db.collection('orders').createIndex({ userId: 1, createdAt: -1 });
         await db.collection('reviews').createIndex({ productId: 1, userId: 1 }, { unique: true });
-
         console.log('Індекси успішно створені');
 
         // ======= Створення представлень (view) =======
@@ -301,8 +339,7 @@ async function createDatabase() {
             }
         }
 
-        console.log('База даних electronicsStore успішно створена та налаштована!');
-
+        console.log('База даних electronicsStore успішно створена та налаштована для ЛР 8!');
     } catch (error) {
         console.error('Помилка при створенні бази даних:', error);
     } finally {
